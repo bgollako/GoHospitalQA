@@ -4,8 +4,6 @@
 1. Run "git clone git@github.com:bgollako/GoHospital.git"
 2. Run "go run main.go" inside the cloned repo
 3. The apis will be available on http://localhost:8082
-4. Press Ctrl+C to stop the containers.
-5. After testing, run "docker-compose down --rmi local -v" to shutdown all the containers.
 
 ### Available APIs
 

@@ -8,14 +8,14 @@
 ### Available APIs
 
 * Get All Patients
-    - URL : http://localhost:8082/v1/Patients
+    - URL : http://localhost:80/v1/Patients
     - Method : GET
 * Delete Patient
-    - URL : http://localhost:8082/v1/Patients?id=patient_id
+    - URL : http://localhost:80/v1/Patients?id=patient_id
     - Method : DELETE
-    - Example : http://localhost:8082/v1/Patients?id=5c6da1cbc98edcc2a14ed703
+    - Example : http://localhost:80/v1/Patients?id=5c6da1cbc98edcc2a14ed703
 * Post Patients
-    - URL : http://localhost:8082/v1/Patients
+    - URL : http://localhost:80/v1/Patients
     - Method : POST
     - Body : [
              {
@@ -30,7 +30,7 @@
              }
              ]
 * Update Patient
-    - URL : http://localhost:8082/v1/Patients?id=patient_id
+    - URL : http://localhost:80/v1/Patients?id=patient_id
     - Method : PATCH
     - Body : {
              	"name":"Sherlock",

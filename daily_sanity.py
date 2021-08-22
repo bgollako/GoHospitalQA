@@ -1,81 +1,70 @@
-from requests import get, post, delete, patch
+from requests import get, post, put, delete
 from json import dumps
 
+patient_url = 'http://localhost:8082/patients'
 
-def test_get_patients():
-    url = 'http://localhost:8082/v1/Patients'
-    response = get(url=url)
-    if response.status_code == 200:
-        print('GET Patients completed')
-        patients = response.json()
-        print('Found {0} patients'.format(len(patients)))
-    else:
-        print('GET Patients failed with status code {0}'.format(str(response.status_code)))
+test_case_table = {
+    'Get Patients': False,
+    'Add Patient': False,
+    'Update Patient': False,
+    'Delete Patient': False
+}
 
 
-# This method creates patients
-def test_post_patients():
-    url = 'http://localhost:8082/v1/Patients'
-    patients = dumps([{'name':'Kishore', 'age':33, 'disease':'back pain'},{'name':'Kiran', 'age':31, 'disease':'shoulder pain'}])
-    response = post(url=url, data=patients)
-    if response.status_code == 200:
-        print('Created 2 patients')
-    else:
-        print('Patients creation failed with status code {0}'.format(str(response.status_code)))
+# get_patients fetches the patients from the given url and checks against the given expected_patient_count
+# updates the test_case_table if is_test_case is true
+# Returns the list of patients if the request was successful
+def get_patients(expected_patient_count: int, is_test_case: bool):
+    resp = get(patient_url)
+    if resp.status_code != 200:
+        print('failed to fetch patients with status code {0}'.format(resp.status_code))
+        return
+    if len(resp.json()) != expected_patient_count:
+        print('expected {0} patients found {1} patients'.format(expected_patient_count, len(resp.json())))
+        return
+    if is_test_case:
+        test_case_table['Get Patients'] = True
+    return resp.json()
 
 
-# This method deletes patients that were created by the above post patients method
-def test_delete_patients():
-    del_url = 'http://localhost:8082/v1/Patients?id={0}'
-    get_url = 'http://localhost:8082/v1/Patients'
-    response = get(url=get_url)
-    ids = []
-    if response.status_code == 200:
-        patients = response.json()
-        if len(patients) == 0:
-            print('No patients found')
-            return
-        for patient in patients:
-            if patient.get('name') == 'Kiran' or patient.get('name') == 'Kishore':
-                ids.append(patient['id'])
-        for i in ids:
-            response = delete(del_url.format(i))
-            if response.status_code == 200:
-                print('Deleted patient with id {0}'.format(i))
-            else:
-                print('Patient deletion failed with status code {0}'.format(str(response.status_code)))
+def add_patient():
+    new_patient = {"Name": "Tom", "Age": 70, "Symptoms": ["Knee Pains", "Back Pains"]}
+    resp = post(patient_url, data=dumps(new_patient))
+    if resp.status_code != 200:
+        print('failed to create patient with status code {0}'.format(resp.status_code))
+        return
+    if get_patients(3, False) is not None:
+        test_case_table['Add Patient'] = True
 
 
-# This method increments the created patients age by 2
-def test_update_patient():
-    update_url = 'http://localhost:8082/v1/Patients?id={0}'
-    get_url = 'http://localhost:8082/v1/Patients'
-    response = get(url=get_url)
-    update_patients = []
-    if response.status_code == 200:
-        patients = response.json()
-        if len(patients) == 0:
-            print('No patients found')
-            return
-        for patient in patients:
-            if patient.get('name') == 'Kiran' or patient.get('name') == 'Kishore':
-                update_patients.append(patient)
-        for p in update_patients:
-            p['age'] += 2
-            i = p.pop('id')
-            response = patch(update_url.format(i), dumps(p))
-            if response.status_code == 200:
-                print('Updated patient with id {0}'.format(i))
-            else:
-                print('Patient updation failed with status code {0}'.format(str(response.status_code)))
+def update_patient():
+    updated_patient = {"Name": "Tom", "Age": 70, "Symptoms": ["Knee Pains", "Back Pains", "Ankle Pain"]}
+    patients = get_patients(3, False)
+    for patient in patients:
+        if patient['Name'] == 'Tom':
+            resp = put('/'.join([patient_url, patient['Id']]), data=dumps(updated_patient))
+            if resp.status_code != 200:
+                print('failed to update patient with status code {0}'.format(resp.status_code))
+                return
+            test_case_table['Update Patient'] = True
+            break
 
 
-def main():
-    test_get_patients()
-    test_post_patients()
-    test_update_patient()
-    test_delete_patients()
+def delete_patient():
+    patients = get_patients(3, False)
+    for patient in patients:
+        if patient['Name'] == 'Tom':
+            resp = delete('/'.join([patient_url, patient['Id']]))
+            if resp.status_code != 200:
+                print('failed to delete patient with status code {0}'.format(resp.status_code))
+                return
+            if get_patients(2, False) is not None:
+                test_case_table['Delete Patient'] = True
+            break
 
 
 if __name__ == '__main__':
-    main()
+    get_patients(2, True)
+    add_patient()
+    update_patient()
+    delete_patient()

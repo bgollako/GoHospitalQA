@@ -1,0 +1,53 @@
+{
+	"info": {
+		"_postman_id": "f3c275cc-8a36-4404-ace2-c668fdb76a31",
+		"name": "Patients",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Patients",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://127.0.0.1:8082/patients"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Patient",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Name\": \"Tom\",\n    \"Age\": 30,\n    \"Symptoms\" : [\n        \"Fever\",\n        \"Cold\"\n    ]\n}"
+				},
+				"url": "http://127.0.0.1:8082/patients"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Patient",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Name\": \"Jerry\",\n    \"Age\": 25,\n    \"Symptoms\" : [\n        \"Fever\",\n        \"Cold\",\n        \"Diarrhea\"\n\n    ]\n}"
+				},
+				"url": "http://127.0.0.1:8082/patients/84cb0c07-8e2a-4b29-bf25-b853c614c0af"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Patient",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://127.0.0.1:8082/patients/fbb194a4-9f12-48f0-ae89-a07f1ea1e242"
+			},
+			"response": []
+		}
+	]
+}
